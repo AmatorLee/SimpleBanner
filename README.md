@@ -1,7 +1,7 @@
 # SimpleBanner
 一个简单的广告轮播库
 
-##使用
+## 使用
 1.  在你project的```build.gradle```的```repositories```里面添加：
 ```
 allprojects {
@@ -98,7 +98,7 @@ dependencies {
 
 同时我推荐一个开源库[android-viewpager-transformers](https://github.com/geftimov/android-viewpager-transformers)
 
-##感谢
+## 感谢
 
 [android-viewpager-transformers](https://github.com/geftimov/android-viewpager-transformers)
 
