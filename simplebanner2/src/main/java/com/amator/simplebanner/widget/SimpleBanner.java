@@ -150,6 +150,7 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
      * BannerPage滑动监听
      */
     private OnBannerPageChangeListener mOnBannerPageChangeListener;
+    private boolean isShowBannerAnimate = true;
 
 
     private SimpleBanner(Context context) {
@@ -171,7 +172,7 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
                 isShowBannerTips = ta.getBoolean(R.styleable.SimpleBanner_isShowBannerTips, false);
                 indicatorMargin = ta.getDimensionPixelSize(R.styleable.SimpleBanner_indicator_margin, 10);
                 indicatorSpace = ta.getDimensionPixelSize(R.styleable.SimpleBanner_indicator_padding, 5);
-
+                isShowBannerAnimate = ta.getBoolean(R.styleable.SimpleBanner_isShowBannerContainerAnimate, true);
                 mShapeVAlue = ta.getInteger(R.styleable.SimpleBanner_indicator_shape, OVAL.ordinal());
                 for (IndicatorShape shape : IndicatorShape.values()) {
                     if (shape.ordinal() == mShapeVAlue) {
@@ -603,6 +604,12 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
 
     public SimpleBanner setBannerPageTranFormer(boolean reverseDrawingOrder, ViewPager.PageTransformer transformer) {
         mBannerViewPager.setPageTransformer(reverseDrawingOrder, transformer);
+        return this;
+    }
+
+    public SimpleBanner setBannerContainerAnimate(boolean showBannerAnimate) {
+        isShowBannerAnimate = showBannerAnimate;
+        AnimateUtil.canShowAnimate = isShowBannerAnimate;
         return this;
     }
 }

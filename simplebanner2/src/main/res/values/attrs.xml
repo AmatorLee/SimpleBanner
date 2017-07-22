@@ -21,6 +21,7 @@
 
         <attr name="indicator_margin" format="dimension"/>
         <attr name="indicator_padding" format="dimension"/>
+        <attr name="isShowBannerContainerAnimate" format="boolean"/>
     </declare-styleable>
 
 
