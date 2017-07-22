@@ -1,5 +1,6 @@
 # SimpleBanner
 一个简单的广告轮播库
+
 ##使用
 1.  在你project的```build.gradle```的```repositories```里面添加：
 ```
@@ -8,19 +9,25 @@ allprojects {
 			...
 			maven { url 'https://jitpack.io' }
 		}
-	}```
+	}
+```
+	
 2. 在你所需的module的```build.gradle```里面添加依赖：
 ```
 dependencies {
 	       compile 'com.github.AmatorLee:SimpleBanner:1.0.0'
-	}```
-3. 在你需要展示Banner数据的xml文件中引入：
+	}
+```
+
+3. 在你需要展示Banner数据的xml文件中引入：(非必须，可在java文件直接create)
 ```  
   <com.amator.simplebanner.widget.SimpleBanner
         android:id="@+id/banner_simple"
         android:layout_width="match_parent"
         android:layout_height="200dp">
-    </com.amator.simplebanner.widget.SimpleBanner>```
+    </com.amator.simplebanner.widget.SimpleBanner>
+```
+
 4. 在Activity或者Fragment中配置SimpleBanner：
 ```
  /**
