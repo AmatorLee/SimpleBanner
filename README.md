@@ -85,8 +85,22 @@ dependencies {
         super.onPause();
         //释放资源避免内存泄漏
         mBanner.stop();
-    }```
+    }
+```
+
 就这样就可以实现以下效果
 
 ![simplebanner](http://upload-images.jianshu.io/upload_images/2605454-0fedbe57178ce488.gif?imageMogr2/auto-orient/strip)
-可能有人会问，那么切换效果呢？，其实切换效果的实现很简单，但是实现炫酷的切换效果需要大量是时间进行计算，同时对于部分APP来说是不合适的，所以我不打算提供多种切换效果，当然你可以自己实现然后调用```setBannerPageTranFormer(boolean reverseDrawingOrder, ViewPager.PageTransformer transformer)```即可。同时我推荐一个开源库[android-viewpager-transformers](https://github.com/geftimov/android-viewpager-transformers)，感谢。
+
+可能有人会问，那么切换效果呢？，其实切换效果的实现很简单，但是实现炫酷的切换效果需要大量是时间进行计算，同时对于部分APP来说是不合适的，所以我不打算提供多种切换效果
+
+当然你可以自己实现然后调用```setBannerPageTranFormer(boolean reverseDrawingOrder, ViewPager.PageTransformer transformer)```
+
+同时我推荐一个开源库[android-viewpager-transformers](https://github.com/geftimov/android-viewpager-transformers)
+
+##感谢
+
+[android-viewpager-transformers](https://github.com/geftimov/android-viewpager-transformers)
+
+[AndroidImageSlider](https://github.com/daimajia/AndroidImageSlider)
+
