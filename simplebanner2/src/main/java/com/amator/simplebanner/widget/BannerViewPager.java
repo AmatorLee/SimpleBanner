@@ -5,12 +5,9 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 
-import com.amator.simplebanner.R;
-import com.amator.simplebanner.listener.OnBannerChangeListener;
 import com.amator.simplebanner.util.BannerDirection;
 
-import static android.os.Build.VERSION_CODES.N;
-import static com.amator.simplebanner.util.BannerDirection.*;
+import static com.amator.simplebanner.util.BannerDirection.LEFT;
 
 /**
  * Created by AmatorLee on 2017/7/21.
@@ -18,14 +15,13 @@ import static com.amator.simplebanner.util.BannerDirection.*;
 
 public class BannerViewPager extends ViewPager {
 
-    private int delayTime = 3000;
-    private BannerDirection mBannerDirection = LEFT;
-    private boolean isAuto = true;
+    private int delayTime = 3000;//设置展示时间
+    private BannerDirection mBannerDirection = LEFT;//试着轮播方向
+    private boolean isAuto = true;//是否为自动轮播
 
     public void setAuto(boolean auto) {
         isAuto = auto;
     }
-
 
 
     public void setDelayTime(int delayTime) {
@@ -47,6 +43,7 @@ public class BannerViewPager extends ViewPager {
 
     public void start() {
         if (isAuto) {
+            //每次开始前先remove掉避免重复调用
             removeCallbacks(mBannerTask);
             postDelayed(mBannerTask, delayTime);
         }

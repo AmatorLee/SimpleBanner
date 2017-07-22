@@ -19,7 +19,9 @@ import android.widget.TextView;
 import com.amator.simplebanner.R;
 import com.amator.simplebanner.adapter.BannerAdapter;
 import com.amator.simplebanner.listener.OnBannerClickListener;
+import com.amator.simplebanner.listener.OnBannerPageChangeListener;
 import com.amator.simplebanner.util.AnimateUtil;
+import com.amator.simplebanner.util.BannerDirection;
 import com.amator.simplebanner.util.DisplayUtil;
 import com.amator.simplebanner.util.ImageLoader;
 import com.amator.simplebanner.util.IndicatorPosition;
@@ -56,15 +58,15 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
     /**
      * 指示器背景颜色
      */
-    private int mIndicatorBackColor;
+    private int mIndicatorBackColor = getResources().getColor(android.R.color.white);
     /**
      * 指示器前景颜色
      */
-    private int mIndicatorForeColor;
+    private int mIndicatorForeColor = getResources().getColor(android.R.color.holo_blue_light);
     /**
      * 指示器半径
      */
-    private int mIndicatorWidth;
+    private int mIndicatorWidth = 20;
     /**
      * 是否显示banner提示
      */
@@ -107,7 +109,7 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
     /**
      * 指示器高度，当为OVAL时与mIndicatorWidth相同
      */
-    private int mIndicatorHeight;
+    private int mIndicatorHeight = 20;
     /**
      * 未选中图层
      */
@@ -123,7 +125,7 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
     /**
      * 指示器容器margin
      */
-    private int indicatorMargin;
+    private int indicatorMargin = 8;
     /**
      * 指示器padding
      */
@@ -136,10 +138,23 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
      * 选中图层id
      */
     public static final int SELECTEDDRAWABLEID = 0x2;
+    /**
+     * 方向
+     */
+    private BannerDirection mBannerDirection = BannerDirection.LEFT;
+    /**
+     * 展示时间
+     */
+    private int showTime;
+    /**
+     * BannerPage滑动监听
+     */
+    private OnBannerPageChangeListener mOnBannerPageChangeListener;
 
 
-    public SimpleBanner(Context context) {
+    private SimpleBanner(Context context) {
         this(context, null);
+        this.mContext = context;
     }
 
     public SimpleBanner(Context context, AttributeSet attrs) {
@@ -187,7 +202,13 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
         init();
     }
 
-    private void init() {
+
+    public static SimpleBanner createBanner(Context c) {
+        return new SimpleBanner(c).init();
+    }
+
+
+    private SimpleBanner init() {
 
         showLog(true);
 
@@ -215,6 +236,7 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
         mBannerIndicatorContainer.setPadding(padding, padding, padding, padding);
         mViews = new ArrayList<>();
         addView(mBannerContainer);
+        return this;
     }
 
     private void setIndicatorTips() {
@@ -274,7 +296,7 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
         selectedDrawable.setId(0, SELECTEDDRAWABLEID);
 
         //初始化indicatorContainer
-        indicatorContainer = new LinearLayout(getContext());
+        indicatorContainer = new LinearLayout(mContext);
         indicatorContainer.setGravity(Gravity.CENTER_VERTICAL);
         RelativeLayout.LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
@@ -295,66 +317,9 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
                 break;
         }
         //设置margin
-        params.setMargins(indicatorMargin, indicatorMargin, indicatorMargin, indicatorMargin);
+        params.setMargins(indicatorMargin, indicatorMargin / 2, indicatorMargin, indicatorMargin / 2);
         //添加指示器容器布局到SliderLayout
         mBannerIndicatorContainer.addView(indicatorContainer, params);
-    }
-
-
-    public SimpleBanner setIndicatorPosition(IndicatorPosition indicatorPosition) {
-
-        mIndicatorPosition = indicatorPosition;
-        mBannerIndicatorContainer.removeView(indicatorContainer);
-        mBannerIndicatorContainer.removeView(mBannerTips);
-        RelativeLayout.LayoutParams indicatorParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        RelativeLayout.LayoutParams indicatortipsParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        switch (mIndicatorPosition) {
-            case LEFT:
-                indicatorParams.addRule(RelativeLayout.CENTER_VERTICAL);
-                indicatorParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                indicatortipsParams.addRule(CENTER_VERTICAL);
-                indicatortipsParams.addRule(ALIGN_PARENT_RIGHT);
-                break;
-            case CENTER:
-                indicatorParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-                indicatortipsParams.addRule(CENTER_IN_PARENT);
-                setShowBannerTips(false);
-                break;
-            case RIGHT:
-                indicatorParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                indicatorParams.addRule(RelativeLayout.CENTER_VERTICAL);
-                indicatortipsParams.addRule(ALIGN_PARENT_LEFT);
-                indicatortipsParams.addRule(CENTER_VERTICAL);
-                break;
-        }
-
-        //设置margin
-        indicatorParams.setMargins(indicatorMargin, indicatorMargin, indicatorMargin, indicatorMargin);
-        //添加指示器容器布局到SliderLayout
-        mBannerIndicatorContainer.addView(indicatorContainer, indicatorParams);
-        mBannerIndicatorContainer.addView(mBannerTips, indicatortipsParams);
-        return this;
-
-    }
-
-    public SimpleBanner setIndicatorShape(IndicatorShape indicatorShape) {
-        mIndicatorShape = indicatorShape;
-        GradientDrawable unSelectedGradientDrawable = (GradientDrawable) unSelectedDrawable.getDrawable(0);
-        GradientDrawable selectedGradientDrawable = (GradientDrawable) selectedDrawable.getDrawable(0);
-        switch (mIndicatorShape) {
-            case RECT:
-                unSelectedGradientDrawable.setShape(GradientDrawable.RECTANGLE);
-                selectedGradientDrawable.setShape(GradientDrawable.RECTANGLE);
-                break;
-            case OVAL:
-                unSelectedGradientDrawable.setShape(GradientDrawable.OVAL);
-                selectedGradientDrawable.setShape(GradientDrawable.OVAL);
-                break;
-        }
-        unSelectedDrawable.setDrawableByLayerId(UNSELECTDRAWABLEID, unSelectedGradientDrawable);
-        selectedDrawable.setDrawableByLayerId(SELECTEDDRAWABLEID, selectedGradientDrawable);
-
-        return this;
     }
 
     public SimpleBanner setImageRes(List<?> imageRes) {
@@ -366,13 +331,11 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
             mTips = tips;
         }
         Logger.d(TAG, "setImageRes excute====");
-
         for (int i = 0; i < imageRes.size(); i++) {
             ImageView imageView = new ImageView(mContext);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             ImageLoader.loadImage(mContext, imageRes.get(i), imageView);
             mViews.add(imageView);
-
         }
 
         //初始化指示器，并添加到指示器容器布局
@@ -429,13 +392,90 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
     }
 
 
-    public void start() {
+    public SimpleBanner start() {
         mBannerViewPager.start();
+        return this;
     }
 
-    public void stop() {
+    public SimpleBanner stop() {
         mBannerViewPager.stop();
+        return this;
     }
+
+    public SimpleBanner setOnBannerPageChangeListener(OnBannerPageChangeListener onBannerPageChangeListener) {
+        mOnBannerPageChangeListener = onBannerPageChangeListener;
+        return this;
+    }
+
+    public SimpleBanner setBannerDirection(BannerDirection bannerDirection) {
+        mBannerDirection = bannerDirection;
+        mBannerViewPager.setBannerDirection(bannerDirection);
+        return this;
+    }
+
+    public SimpleBanner setBannerShowTime(int showTime) {
+        this.showTime = showTime;
+        mBannerViewPager.setDelayTime(showTime);
+        return this;
+    }
+
+
+    public SimpleBanner setIndicatorPosition(IndicatorPosition indicatorPosition) {
+
+        mIndicatorPosition = indicatorPosition;
+        mBannerIndicatorContainer.removeView(indicatorContainer);
+        mBannerIndicatorContainer.removeView(mBannerTips);
+        RelativeLayout.LayoutParams indicatorParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams indicatortipsParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        switch (mIndicatorPosition) {
+            case LEFT:
+                indicatorParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                indicatorParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                indicatortipsParams.addRule(CENTER_VERTICAL);
+                indicatortipsParams.addRule(ALIGN_PARENT_RIGHT);
+                break;
+            case CENTER:
+                indicatorParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+                indicatortipsParams.addRule(CENTER_IN_PARENT);
+                setShowBannerTips(false);
+                break;
+            case RIGHT:
+                indicatorParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                indicatorParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                indicatortipsParams.addRule(ALIGN_PARENT_LEFT);
+                indicatortipsParams.addRule(CENTER_VERTICAL);
+                break;
+        }
+
+        //设置margin
+//        indicatorParams.setMargins(indicatorMargin, indicatorMargin, indicatorMargin, indicatorMargin);
+        //添加指示器容器布局到SliderLayout
+        mBannerIndicatorContainer.addView(indicatorContainer, indicatorParams);
+        mBannerIndicatorContainer.addView(mBannerTips, indicatortipsParams);
+        return this;
+
+    }
+
+    public SimpleBanner setIndicatorShape(IndicatorShape indicatorShape) {
+        mIndicatorShape = indicatorShape;
+        GradientDrawable unSelectedGradientDrawable = (GradientDrawable) unSelectedDrawable.getDrawable(0);
+        GradientDrawable selectedGradientDrawable = (GradientDrawable) selectedDrawable.getDrawable(0);
+        switch (mIndicatorShape) {
+            case RECT:
+                unSelectedGradientDrawable.setShape(GradientDrawable.RECTANGLE);
+                selectedGradientDrawable.setShape(GradientDrawable.RECTANGLE);
+                break;
+            case OVAL:
+                unSelectedGradientDrawable.setShape(GradientDrawable.OVAL);
+                selectedGradientDrawable.setShape(GradientDrawable.OVAL);
+                break;
+        }
+        unSelectedDrawable.setDrawableByLayerId(UNSELECTDRAWABLEID, unSelectedGradientDrawable);
+        selectedDrawable.setDrawableByLayerId(SELECTEDDRAWABLEID, selectedGradientDrawable);
+
+        return this;
+    }
+
 
     public SimpleBanner setAuto(boolean isAuto) {
         mBannerViewPager.setAuto(isAuto);
@@ -472,6 +512,9 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
         if (mViews != null) {
             position = position % mViews.size();
         }
+        if (mOnBannerPageChangeListener != null) {
+            mOnBannerPageChangeListener.onBannerPageScrolled(position, positionOffset, positionOffsetPixels);
+        }
         Logger.d(TAG, "onPageScrolled =====");
     }
 
@@ -480,13 +523,18 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
         if (mViews != null) {
             position = position % mViews.size();
         }
+        if (mOnBannerPageChangeListener != null) {
+            mOnBannerPageChangeListener.onPageSelected(position);
+        }
         Logger.d(TAG, "onPageSelected: =======" + mTips);
         if (mTips != null) {
             Logger.d(TAG, "SetBannerTip excute====");
             setBannerTip(mTips.get(position));
         }
         switchIndicator(position);
-        AnimateUtil.showView(mBannerIndicatorContainer);
+        if (isShowBannerIndicator) {
+            AnimateUtil.showView(mBannerIndicatorContainer);
+        }
     }
 
     @Override
@@ -499,7 +547,13 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
         }
 
         if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            AnimateUtil.hideView(mBannerIndicatorContainer);
+            if (isShowBannerIndicator) {
+                AnimateUtil.hideView(mBannerIndicatorContainer);
+            }
+        }
+
+        if (mOnBannerPageChangeListener != null) {
+            mOnBannerPageChangeListener.onBannerPageScrollStateChanged(state);
         }
 
     }
@@ -510,8 +564,9 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
         }
     }
 
-    public void showLog(boolean debug) {
+    public SimpleBanner showLog(boolean debug) {
         Logger.DEBUG = debug;
+        return this;
     }
 
     public SimpleBanner setOnBannerClickListener(OnBannerClickListener bannerClickListener) {
@@ -535,6 +590,19 @@ public class SimpleBanner extends RelativeLayout implements ViewPager.OnPageChan
     public SimpleBanner setShowBannerIndicator(boolean showBannerIndicator) {
         isShowBannerIndicator = showBannerIndicator;
         mBannerIndicatorContainer.setVisibility(showBannerIndicator ? VISIBLE : GONE);
+        Logger.d(TAG, "isBannershow====" + mBannerIndicatorContainer.getVisibility());
+        return this;
+    }
+
+    public SimpleBanner setBannerIndicatorContainerColor(int color) {
+        if (isShowBannerIndicator) {
+            mBannerIndicatorContainer.setBackgroundColor(color);
+        }
+        return this;
+    }
+
+    public SimpleBanner setBannerPageTranFormer(boolean reverseDrawingOrder, ViewPager.PageTransformer transformer) {
+        mBannerViewPager.setPageTransformer(reverseDrawingOrder, transformer);
         return this;
     }
 }

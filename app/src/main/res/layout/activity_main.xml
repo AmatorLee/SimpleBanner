@@ -2,17 +2,16 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_banner_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
     <com.amator.simplebanner.widget.SimpleBanner
-        app:isShowBannerTips="true"
-        app:indicator_shape="rect"
         android:id="@+id/banner_simple"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:isShowBannerIndicator="true"></com.amator.simplebanner.widget.SimpleBanner>
+        android:layout_height="200dp">
+    </com.amator.simplebanner.widget.SimpleBanner>
 
 
 </LinearLayout>
